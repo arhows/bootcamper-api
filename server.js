@@ -2,6 +2,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const chalk = require('chalk');
 
+// middleware
+const logger = require('./middleware/logger');
+
 // router files
 const bootcamp = require('./routes/bootcamp');
 
@@ -11,6 +14,8 @@ const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL || '/api/v1';
 
 const app = express();
+
+app.use(logger);
 
 // Mount routers
 app.use(`${API_URL}/bootcamps`, bootcamp);
