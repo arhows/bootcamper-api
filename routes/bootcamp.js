@@ -11,6 +11,7 @@ const {
 const router = express.Router();
 
 router.route('/').get(getAllBootCamps).post(createBootcamp);
+
 router
   .route('/:id')
   .get(getBootcamp)

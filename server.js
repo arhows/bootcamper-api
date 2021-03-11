@@ -20,10 +20,14 @@ const bootcamp = require('./routes/bootcamp');
 
 const app = express();
 
+// Body parser
+app.use(express.json());
+
+// Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
-  // app.use(logger);
 }
+// app.use(logger);
 
 // Mount routers
 app.use(`${API_URL}/bootcamps`, bootcamp);

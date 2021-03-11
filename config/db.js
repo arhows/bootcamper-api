@@ -9,6 +9,7 @@ const connectDB = async () => {
       useFindAndModify: false,
       useUnifiedTopology: true,
     });
+
     console.log(chalk.bgGrey(`MongoDB Connected: ${conn.connection.host}`));
   } catch (error) {
     console.log(chalk.bgRed('Connection Error: ', error));
