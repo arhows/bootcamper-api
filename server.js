@@ -7,7 +7,6 @@ const connectDB = require('./config/db');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
-const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL || '/api/v1';
 
 // Connect to database
@@ -35,6 +34,8 @@ app.use(`${API_URL}/bootcamps`, bootcamp);
 
 // Error global handers
 app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(
