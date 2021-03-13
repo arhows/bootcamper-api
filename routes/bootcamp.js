@@ -6,6 +6,7 @@ const {
   createBootcamp,
   updateBootcamp,
   deleteBootcamp,
+  notfoundBootcamp,
 } = require('../controllers/bootcamp');
 
 const router = express.Router();
@@ -17,5 +18,7 @@ router
   .get(getBootcamp)
   .put(updateBootcamp)
   .delete(deleteBootcamp);
+
+router.route('/').delete(notfoundBootcamp).put(notfoundBootcamp);
 
 module.exports = router;

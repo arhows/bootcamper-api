@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const chalk = require('chalk');
 const morgan = require('morgan');
+const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
 // load env vars
@@ -31,6 +32,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount routers
 app.use(`${API_URL}/bootcamps`, bootcamp);
+
+// Error global handers
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   console.log(
