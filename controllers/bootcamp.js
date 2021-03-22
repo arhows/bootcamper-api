@@ -1,12 +1,45 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const geocoder = require('../utils/geocoder');
 const Bootcamp = require('../models/Bootcamp');
+const { geocode } = require('../utils/geocoder');
 
 // @desc  Get all bootcamps
 // @route GET /api/v1/bootcamps
 // @acess Public
 exports.getAllBootCamps = asyncHandler(async (req, res, next) => {
-  const data = await Bootcamp.find();
+  let query;
+
+  // copy req.query
+  const reqQry = { ...req.query };
+
+  // Fields to exclude
+  const removeFields = ['select'];
+
+  // Loop over removeFields and delete them from reqQry
+  removeFields.forEach((param) => delete reqQry[param]);
+
+  // Creatre query string
+  let qryParams = JSON.stringify(req.query);
+
+  // Create operators ($gt, $gte, etc)
+  qryParams = qryParams.replace(
+    /\b(lt|lte|gt|gte|in)\b/g,
+    (match) => `$${match}`
+  );
+
+  // Fiding resource
+  query = Bootcamp.find(JSON.parse(qryParams));
+
+  // Select Fields
+  if (req.query.select) {
+    console.log('achei o select');
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  // Execute query
+  const data = await query;
 
   res.status(200).json({ sucess: true, count: data.length, data: data });
 });
@@ -70,6 +103,29 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json({ sucess: true, msg: `Deleted bootcamp id ${id} sucessfully` });
+});
+
+// @desc  Get bootcamps within a radius
+// @route GET /api/v1/bootcamps/radius/:zipcode/:distance
+// @acess Private
+exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
+  const { zipcode, distance } = req.params;
+
+  // Get lat/long from geocoder
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const lng = loc[0].longitude;
+
+  // Calc radius using radians
+  // Divide dist by radius of Earth
+  // Earth Radius = 3,963 mi / 6,378 km
+  const radius = distance / 3963;
+
+  const data = await Bootcamp.find({
+    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({ sucess: true, count: data.length, data: data });
 });
 
 exports.notfoundBootcamp = (req, res) => {
