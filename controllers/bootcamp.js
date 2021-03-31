@@ -165,7 +165,5 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 });
 
 exports.notfoundBootcamp = (req, res) => {
-  res
-    .status(404)
-    .json({ sucess: false, msg: '404 page, parameters not found!' });
+  res.status(404).json({ sucess: false, msg: '404 page, router not found!' });
 };
