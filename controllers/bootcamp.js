@@ -29,7 +29,12 @@ exports.getAllBootCamps = asyncHandler(async (req, res, next) => {
   );
 
   // Fiding resource
-  query = Bootcamp.find(JSON.parse(qryParams));
+  // query = Bootcamp.find(JSON.parse(qryParams));
+  // query = Bootcamp.find(JSON.parse(qryParams)).populate('courses');
+  query = Bootcamp.find(JSON.parse(qryParams)).populate({
+    path: 'courses',
+    select: 'title description tuition',
+  });
 
   // Select Fields
   if (req.query.select) {
@@ -85,7 +90,10 @@ exports.getAllBootCamps = asyncHandler(async (req, res, next) => {
 // @acess Public
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
-  const data = await Bootcamp.findById(id);
+  const data = await Bootcamp.findById(id).populate({
+    path: 'courses',
+    select: 'title description tuition',
+  });
 
   if (!data) {
     next(
